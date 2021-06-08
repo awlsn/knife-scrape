@@ -87,7 +87,7 @@ export async function saveItem(url) {
     });
   }
 }
-
+/*
 async function uploadImage(src) {
   return new Promise(
     cloudinary.v2.uploader.upload(src, function (err, res) {
@@ -97,3 +97,4 @@ async function uploadImage(src) {
     })
   );
 }
+*/

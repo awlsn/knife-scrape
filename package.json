@@ -5,10 +5,12 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon src/index.js",
+    "start-wsl": "nodemon -r dotenv/config src/index.js"
   },
   "dependencies": {
     "cloudinary": "1.26.0",
+    "dotenv": "^10.0.0",
     "fast-xml-parser": "3.19.0",
     "isomorphic-fetch": "3.0.0",
     "jsdom": "16.6.0",
