@@ -49,23 +49,3 @@ async function checkItem(url) {
   console.log(rec);
   // create new record for the item? etc.
 }
-
-/*
-
-JKI
-
-get all products
-
-
-
--> loc param with .json added is knife data
-
-"inventory_quantity": 0, = sold out?
-
-need to store URL also
-
-need to figure out object shape for DB, do differential updates
-
-for JKI, could check https://www.japaneseknifeimports.com/collections/in-stock-items.json products_count?
-
-*/
