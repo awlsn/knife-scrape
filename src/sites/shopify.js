@@ -27,7 +27,7 @@ export async function scrapeShopifySite(siteUrl) {
       console.log("item already exists", url);
       // check if there is a newer version available and update if needed
 
-      const fetchDate = new Date(loc.lastmod);
+      const fetchDate = new Date(item.lastmod);
       const dbDate = new Date(dbItem.storeUpdatedAt);
 
       if (fetchDate > dbDate) {
