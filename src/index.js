@@ -20,11 +20,11 @@ async function main () {
   const db = mongoose.connection;
   console.log('Connected?',mongoose.connection.readyState);
   
-  // scrapeShopifySite("https://bernalcutlery.com/");
-  // scrapeShopifySite("https://japanesechefsknife.com/");
-  // scrapeShopifySite("https://knifewear.com/");
-  // scrapeShopifySite("https://carbonknifeco.com/");
-  // scrapeShopifySite("https://www.japaneseknifeimports.com/");
+  scrapeShopifySite("https://bernalcutlery.com/");
+  scrapeShopifySite("https://japanesechefsknife.com/");
+  scrapeShopifySite("https://knifewear.com/");
+  scrapeShopifySite("https://carbonknifeco.com/");
+  scrapeShopifySite("https://www.japaneseknifeimports.com/");
   scrapeShopifySite("https://knivesandstones.us/");
 }
 
