@@ -15,7 +15,9 @@ const itemSchema = new Schema({
   quantity: Number,
   price: Number,
   desc: String,
+  image: {},
   images: [],
+  tags: String,
 
   hidden: Boolean,
   comments: [{ body: String, date: Date }],

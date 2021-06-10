@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon src/index.js",
-    "start-wsl": "nodemon -r dotenv/config src/index.js"
+    "start-wsl": "node -r dotenv/config src/index.js"
   },
   "dependencies": {
     "cloudinary": "1.26.0",

@@ -39,25 +39,28 @@ export async function scrapeShopifySite(url) {
 export async function saveItem(url) {
   // fetch json data for item
   //url = "https://www.japaneseknifeimports.com/products/gesshin-ittetsu-180mm-white-2-hon-kasumi-wa-petty";
-  url =
-    "https://www.japaneseknifeimports.com/products/gesshin-stainless-240mm-wa-gyuto";
+  url = "https://www.japaneseknifeimports.com/products/gesshin-stainless-240mm-wa-gyuto";
+  // url = "https://knifewear.com/products/tadafusa-hocho-kobo-bread-knife-230mm-hk-1"
   const res = await fetch(url + ".json");
   const item = await res.json();
 
   const rec = {};
   rec.name = item.product.title;
   rec.storeId = item.product.id;
-  // rec.desc = item.product.body_html;
+  rec.desc = item.product.body_html;
   rec.price = item.product.variants[0].price;
   rec.quantity = item.product.variants[0].inventory_quantity;
   rec.storeCreatedAt = item.product.created_at;
   rec.storeUpdatedAt = item.product.updated_at;
+  rec.tags = item.product.tags;
   rec.url = `https://www.japaneseknifeimports.com/products/${item.product.handle}`;
 
   //rec.image = item.product.image;
   //rec.images = item.product.images;
 
   const dbItem = await Item.findOne({ url });
+
+  // console.log('dbItem: ', dbItem);
 
   if (dbItem) {
     console.log("item already exists");
@@ -68,33 +71,46 @@ export async function saveItem(url) {
       console.log("need to update!");
       // update item
       Item.updateOne({ url }, rec, function (err, doc) {
-        if (err) return console.error(err);
-        console.log(rec);
+        if (err) return console.error("DB UPDATE ERROR!", err);
+        //console.log(rec);
         console.log("updated a new item");
       });
     }
     // console.log(dbItem);
   } else {
     // upload images
-    //const image = await uploadImage(item.product.image.src);
+    console.log('uploading main image');
+    const image = await uploadImage(item.product.image.src);
+    console.log('uploading other images');
+    const images = await item.product.images.map(async (img) => {await uploadImage(img.src)}) 
 
     // save a new item
-    const recItem = new Item(rec);
-    recItem.save(function (err, doc) {
-      if (err) return console.error(err);
-      console.log(rec);
-      console.log("added a new item");
-    });
+    
+      console.log('adding new item...');
+      rec.image = image;
+      rec.images = images;
+      const recItem = new Item(rec);
+      recItem.save(function (err, doc) {
+        
+        if (err) console.error('DB Save Exception!', err);
+      });
+   
+    
   }
 }
-/*
+
 async function uploadImage(src) {
-  return new Promise(
-    cloudinary.v2.uploader.upload(src, function (err, res) {
-      if (err) return console.error(err);
+  return new Promise(function(resolve, reject) {
+    
+    cloudinary.v2.uploader.upload(src, {use_filename: true, unique_filename: false, folder: 'knifedb'}, function (err, res) {
+      if (err) return reject(err);
       console.log("image uploaded!");
-      return res;
+      resolve(res);
     })
+   
+    
+    
+  }
   );
+  
 }
-*/
