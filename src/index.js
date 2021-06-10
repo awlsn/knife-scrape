@@ -1,4 +1,3 @@
-import http from "http";
 import mongoose from "mongoose";
 import cloudinary from "cloudinary";
 
@@ -22,33 +21,4 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// Need to store historical data?
-
-/*
-
-each site is its own js file
-for now just write to json?
-
-create a raw copy, then migrate it into a standardized system?
-
-TODO need to try catch the scrape attempts
-
-*/
-
-//create a server object:
-http
-  .createServer(function (req, res) {
-    // scrapeShopifySite("https://bernalcutlery.com/");
-    /*
-    scrapeShopifySite("https://knifewear.com/");
-    scrapeShopifySite("https://japanesechefsknife.com/");
-    scrapeShopifySite("https://carbonknifeco.com/");
-    scrapeShopifySite("https://www.japaneseknifeimports.com/");
-    scrapeShopifySite("https://knivesandstones.us/");
-    */
-    saveItem("");
-    //checkCKTG();
-    res.write("Hello World!"); //write a response to the client
-    res.end(); //end the response
-  })
-  .listen(8080); //the server object listens on port 8080
+saveItem('');
