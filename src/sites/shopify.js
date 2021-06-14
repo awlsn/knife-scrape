@@ -26,35 +26,31 @@ export async function scrapeShopifySite(siteUrl) {
     if (dbItem) {
       console.log("item already exists", url);
       // check if there is a newer version available and update if needed
-
       const fetchDate = new Date(item.lastmod);
       const dbDate = new Date(dbItem.storeUpdatedAt);
 
       if (fetchDate > dbDate) {
-        // update item
-        Item.updateOne({ url }, rec, function (err, doc) {
-          if (err) return console.error("DB UPDATE ERROR!", err);
-          //console.log(rec);
-          console.log("updated a new item", url);
-        });
+        const item = await getItemJson(url);
+        const rec = prepareItemRecord(item);
+        updateItem(rec);
     }
    } else {
-      saveItem(url);
+      const item = await getItemJson(url);
+      const rec = prepareItemRecord(item);
+      saveItem(rec);
     }
   });
-
-  // scrape product links
-  // build product db from links,
-  // check if exists, check if up to date
-  // if new, make new record
 }
 
-
-export async function saveItem(url) {
+export async function getItemJson(url) {
   // shopify has a json data version for each product url if you append .json
   const res = await fetch(url + ".json");
   const item = await res.json();
+  return item;
+}
 
+export async function prepareItemRecord(item) {
+  // this is an object that reflects the Item model
   const rec = {};
   rec.name = item.product.title;
   rec.storeId = item.product.id;
@@ -64,17 +60,34 @@ export async function saveItem(url) {
   rec.storeCreatedAt = item.product.created_at;
   rec.storeUpdatedAt = item.product.updated_at;
   rec.tags = item.product.tags;
-  rec.url = url;
+  rec.productUrl = url;
+  rec.siteUrl = siteUrl;
+
+  return rec;
+}
+
+export async function updateItem(rec) {
+  const url = rec.productUrl;
+
+  Item.updateOne({ url }, rec, function (err, doc) {
+    if (err) return console.error("DB UPDATE ERROR!", err);
+    //console.log(rec);
+    console.log("updated a new item", url);
+  });
+}
+
+export async function saveItem(rec) {
+  const url = rec.productUrl;
 
   // upload images
   console.log('uploading images...', url);
   try {
-    const image = await uploadImage(item.product?.image?.src);
-    const images = await item.product.images.map(async (img) => {await uploadImage(img.src)}) 
+    const image = await uploadImageToCloudinary(item.product?.image?.src);
+    const images = await item.product.images.map(async (img) => {await uploadImageToCloudinary(img.src)}) 
     rec.image = image;
     rec.images = images;
   } catch(e) {
-    console.log('error uploading to cloudinary', url);
+    console.log('error uploading images', url);
     console.error(e);
   }
   
@@ -85,7 +98,7 @@ export async function saveItem(url) {
   });
 }
 
-async function uploadImage(src) {
+async function uploadImageToCloudinary(src) {
   return new Promise(function(resolve, reject) {
     cloudinary.v2.uploader.upload(src, {use_filename: true, unique_filename: false, folder: 'knifedb'}, function (err, res) {
       if (err) return reject(err);

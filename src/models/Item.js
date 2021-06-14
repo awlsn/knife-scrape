@@ -3,7 +3,9 @@ const { Schema } = mongoose;
 
 const itemSchema = new Schema({
   name: String,
-  url: { type: String, unique: true },
+  siteName: String,
+  siteUrl: String,
+  productUrl: { type: String, unique: true },
 
   store: String,
   storeId: Number,
